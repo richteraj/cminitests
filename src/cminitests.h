@@ -48,16 +48,17 @@ int tests_failed;
  fprintf (stderr, \
           " >>>\t" #msg "\n", ##__VA_ARGS__)
 
-#define CMT_TEST_CASE(test) \
+#define CMT_TEST_CASE(test, args...) { \
   ++tests_count; \
   cmt_set_up (); \
-  char *test##_result = test (); \
+  char *test##_result = test (args); \
   cmt_tear_down (); \
   if (test##_result) { \
     cmt_error ("%s", test##_result); \
     ++tests_failed; } \
   else { \
-    printf (#test " passed.\n"); }
+    printf (#test " passed.\n"); } \
+  }
 
 #define CMT_RUN_TESTS(tests_wrapper) \
   int main (int argc, char *argv[]) { \
@@ -74,15 +75,17 @@ int tests_failed;
       return EXIT_SUCCESS; } \
   }
 
-#define require(cond, message) \
+#define require(cond, message...) \
  if (!(cond)) { \
+   cmt_error ("Assertion require '%s' failed", #cond); \
    return #cond " NOT true: " #message; }
 
-#define require_not(cond, message) \
+#define require_not(cond, message...) \
  if ((cond)) { \
+   cmt_error ("Assertion require_not '%s' failed", #cond); \
    return #cond " NOT false: " #message; }
 
-#define require_streq(s1, s2, message) { \
+#define require_streq(s1, s2, message...) { \
   int s1_len = strlen (s1); \
   int s2_len = strlen (s2); \
   if (s1_len != s2_len) { \
@@ -93,7 +96,7 @@ int tests_failed;
     return #s1 " != " #s2 ": " #message; } \
   }
 
-#define require_strneq(s1, s2, message) { \
+#define require_strneq(s1, s2, message...) { \
   if (!strcmp (s1, s2)) { \
     cmt_error ("'%s' == '%s'", s1, s2); \
     return #s1 " == " #s2 ": " #message; } \
@@ -131,14 +134,14 @@ streqneq_array (char **sa1, char **sa2, bool cmp_equal)
     }
 }
 
-#define require_streq_array(sa1, sa2, message) { \
+#define require_streq_array(sa1, sa2, message...) { \
   if (!streqneq_array ((sa1), (sa2), true)) { \
     cmt_error ("Arrays %s and %s are not equal", #sa1, #sa2); \
     return "Arrays mismatch: " #message; } \
   }
 
 
-#define require_strneq_array(sa1, sa2, message) { \
+#define require_strneq_array(sa1, sa2, message...) { \
   if (!streqneq_array ((sa1), (sa2), false)) { \
     cmt_error ("Arrays %s and %s are equal", #sa1, #sa2); \
     return "Arrays match: " #message; } \
