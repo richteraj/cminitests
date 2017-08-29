@@ -25,8 +25,6 @@
 #ifndef CMINITESTS_H_
 #define CMINITESTS_H_
 
-#pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
-#pragma GCC diagnostic ignored "-Wunused-parameter"
 
 #include <stdbool.h>
 #include <stdlib.h>
