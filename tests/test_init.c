@@ -1,5 +1,3 @@
-#include <assert.h>
-
 #include "cminitests.h"
 
 int setup_count;

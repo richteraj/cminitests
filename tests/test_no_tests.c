@@ -1,4 +1,3 @@
-
 #include "cminitests.h"
 
 void

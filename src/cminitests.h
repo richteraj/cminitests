@@ -54,85 +54,117 @@ static struct _colorful_s {
 };
 
 #ifdef _GNU_SOURCE
-    #define set_short_name(long_name) /* NULL */
-#else
-    static char const *program_invocation_short_name = NULL;
-    void
-    set_short_name(char const *long_name)
-    {
-        char const *last_slash = strrchr (long_name, '/');
-        program_invocation_short_name = last_slash ? last_slash + 0 : long_name;
-    }
+#define set_short_name(long_name) /* NULL */
+#else /* not _GNU_SOURCE */
+
+static char const *program_invocation_short_name = NULL;
+
+void
+set_short_name (char const *long_name)
+{
+    char const *last_slash = strrchr (long_name, '/');
+    program_invocation_short_name = last_slash ? last_slash + 0 : long_name;
+}
+
 #endif /* not _GNU_SOURCE */
 
-#define cmt_error(msg, ...) { \
-    fprintf (stderr, \
-        "%s:%d: %s: %sfailed%s: \n >>>\t%s" #msg, \
-        __FILE__, __LINE__, __func__, \
-        _colorful.cyan, _colorful.none,  _colorful.brown, ##__VA_ARGS__); \
-    fprintf (stderr, "%s\n", _colorful.none); \
-}
-
-#define CMT_TEST_CASE(test, args...) { \
-    ++tests_count; \
-    cmt_set_up (); \
-    char *test##_result = test (args); \
-    cmt_tear_down (); \
-    if (test##_result) { \
-        cmt_error ("%s", test##_result); \
-        ++tests_failed; } \
-    else { \
-        fprintf (stderr, #test ": %spassed%s.\n", _colorful.green, _colorful.none); } \
-}
-
-#define CMT_RUN_TESTS(tests_wrapper) \
-    int main (int argc, char **argv) { \
-        /* Suppress compiler warning: unused arguments */ \
-        assert (argc > 0 && argv); \
-        set_short_name (argv[0]); \
-        tests_failed = 0; \
-        tests_count = 0; \
-        fprintf (stderr, "%s------ RUNNING: %s%s\n", \
-            _colorful.blue, program_invocation_short_name, _colorful.none); \
-        tests_wrapper (); \
-        fprintf (stderr, "%s------ FINISHED: %s%s\n", \
-            _colorful.blue, program_invocation_short_name, _colorful.none); \
-        if (tests_count != 0 && tests_failed != 0) { \
-            fprintf (stderr, \
-                "%s------ %d of %d tests did NOT pass.%s\n", \
-                _colorful.cyan, tests_failed, tests_count, _colorful.none); \
-            exit (EXIT_FAILURE); } \
-        else { \
-            fprintf (stderr, "%s------ All %d tests passed.%s\n", \
-                _colorful.green, tests_count, _colorful.none); } \
+#define cmt_error(msg, ...)                                             \
+    {                                                                   \
+        fprintf (                                                       \
+            stderr, "%s:%d: %s: %sfailed%s: \n >>>\t%s" #msg, __FILE__, \
+            __LINE__, __func__, _colorful.cyan, _colorful.none,         \
+            _colorful.brown, ##__VA_ARGS__);                            \
+        fprintf (stderr, "%s\n", _colorful.none);                       \
     }
 
-#define require(cond, message...) \
-    if (!(cond)) { \
+#define CMT_TEST_CASE(test, args...)                              \
+    {                                                             \
+        ++tests_count;                                            \
+        cmt_set_up ();                                            \
+        char *test##_result = test (args);                        \
+        cmt_tear_down ();                                         \
+        if (test##_result)                                        \
+        {                                                         \
+            cmt_error ("%s", test##_result);                      \
+            ++tests_failed;                                       \
+        }                                                         \
+        else                                                      \
+        {                                                         \
+            fprintf (                                             \
+                stderr, #test ": %spassed%s.\n", _colorful.green, \
+                _colorful.none);                                  \
+        }                                                         \
+    }
+
+#define CMT_RUN_TESTS(tests_wrapper)                                          \
+    int main (int argc, char **argv)                                          \
+    {                                                                         \
+        /* Suppress compiler warning: unused arguments */                     \
+        assert (argc > 0 && argv);                                            \
+        set_short_name (argv[0]);                                             \
+        tests_failed = 0;                                                     \
+        tests_count = 0;                                                      \
+        fprintf (                                                             \
+            stderr, "%s------ RUNNING: %s%s\n", _colorful.blue,               \
+            program_invocation_short_name, _colorful.none);                   \
+        tests_wrapper ();                                                     \
+        fprintf (                                                             \
+            stderr, "%s------ FINISHED: %s%s\n", _colorful.blue,              \
+            program_invocation_short_name, _colorful.none);                   \
+        if (tests_count != 0 && tests_failed != 0)                            \
+        {                                                                     \
+            fprintf (                                                         \
+                stderr, "%s------ %d of %d tests did NOT pass.%s\n",          \
+                _colorful.cyan, tests_failed, tests_count, _colorful.none);   \
+            exit (EXIT_FAILURE);                                              \
+        }                                                                     \
+        else                                                                  \
+        {                                                                     \
+            fprintf (                                                         \
+                stderr, "%s------ All %d tests passed.%s\n", _colorful.green, \
+                tests_count, _colorful.none);                                 \
+        }                                                                     \
+    }
+
+#define require(cond, message...)                           \
+    if (!(cond))                                            \
+    {                                                       \
         cmt_error ("Assertion require '%s' failed", #cond); \
-        return #cond " NOT true: " #message; }
+        return #cond " NOT true: " #message;                \
+    }
 
-#define require_not(cond, message...) \
-    if ((cond)) { \
+#define require_not(cond, message...)                           \
+    if ((cond))                                                 \
+    {                                                           \
         cmt_error ("Assertion require_not '%s' failed", #cond); \
-        return #cond " NOT false: " #message; }
+        return #cond " NOT false: " #message;                   \
+    }
 
-#define require_streq(s1, s2, message...) { \
-    size_t s1_len = strlen (s1); \
-    size_t s2_len = strlen (s2); \
-    if (s1_len != s2_len) { \
-        cmt_error ("Length '%s' != '%s' (%zd != %zd)", s1, s2, s1_len, s2_len); \
-        return #s1 " != " #s2 ": " #message; } \
-    else if (strcmp (s1, s2)) { \
-        cmt_error ("'%s' != '%s'", s1, s2); \
-        return #s1 " != " #s2 ": " #message; } \
-}
+#define require_streq(s1, s2, message...)                                    \
+    {                                                                        \
+        size_t s1_len = strlen (s1);                                         \
+        size_t s2_len = strlen (s2);                                         \
+        if (s1_len != s2_len)                                                \
+        {                                                                    \
+            cmt_error (                                                      \
+                "Length '%s' != '%s' (%zd != %zd)", s1, s2, s1_len, s2_len); \
+            return #s1 " != " #s2 ": " #message;                             \
+        }                                                                    \
+        else if (strcmp (s1, s2))                                            \
+        {                                                                    \
+            cmt_error ("'%s' != '%s'", s1, s2);                              \
+            return #s1 " != " #s2 ": " #message;                             \
+        }                                                                    \
+    }
 
-#define require_strneq(s1, s2, message...) { \
-    if (!strcmp (s1, s2)) { \
-        cmt_error ("'%s' == '%s'", s1, s2); \
-        return #s1 " == " #s2 ": " #message; } \
-}
+#define require_strneq(s1, s2, message...)       \
+    {                                            \
+        if (!strcmp (s1, s2))                    \
+        {                                        \
+            cmt_error ("'%s' == '%s'", s1, s2);  \
+            return #s1 " == " #s2 ": " #message; \
+        }                                        \
+    }
 
 bool
 streqneq_array (char **sa1, char **sa2, bool cmp_equal)
@@ -165,18 +197,23 @@ streqneq_array (char **sa1, char **sa2, bool cmp_equal)
         return cmp_equal;
 }
 
-#define require_streq_array(sa1, sa2, message...) { \
-    if (!streqneq_array ((sa1), (sa2), true)) { \
-        cmt_error ("Arrays %s and %s are not equal", #sa1, #sa2); \
-        return "Arrays mismatch: " #message; } \
-}
+#define require_streq_array(sa1, sa2, message...)                     \
+    {                                                                 \
+        if (!streqneq_array ((sa1), (sa2), true))                     \
+        {                                                             \
+            cmt_error ("Arrays %s and %s are not equal", #sa1, #sa2); \
+            return "Arrays mismatch: " #message;                      \
+        }                                                             \
+    }
 
-
-#define require_strneq_array(sa1, sa2, message...) { \
-    if (!streqneq_array ((sa1), (sa2), false)) { \
-        cmt_error ("Arrays %s and %s are equal", #sa1, #sa2); \
-        return "Arrays match: " #message; } \
-}
+#define require_strneq_array(sa1, sa2, message...)                \
+    {                                                             \
+        if (!streqneq_array ((sa1), (sa2), false))                \
+        {                                                         \
+            cmt_error ("Arrays %s and %s are equal", #sa1, #sa2); \
+            return "Arrays match: " #message;                     \
+        }                                                         \
+    }
 
 int tests_count;
 int tests_failed;
