@@ -3,19 +3,19 @@
 #include "cminitests.h"
 
 char *
-test1 (void)
+Test1 (void)
 {
   return "Expected this failure";
 }
 
 char *
-test2 (void)
+Test2 (void)
 {
   return NULL;
 }
 
 char *
-test3 (void)
+Test3 (void)
 {
   return NULL;
 }
@@ -23,9 +23,9 @@ test3 (void)
 void
 all_tests (void)
 {
-  CMT_TEST_CASE (test1)
-  CMT_TEST_CASE (test2)
-  CMT_TEST_CASE (test3)
+  CMT_TEST_CASE (Test1,)
+  CMT_TEST_CASE (Test2,)
+  CMT_TEST_CASE (Test3,)
 }
 
 int
@@ -41,3 +41,20 @@ main (void)
 
   return 0;
 }
+
+/* test_test_count.c -- test number of tests
+   Copyright 2017 A. Johannes RICHTER <albrechtjohannes.richter@gmail.com>
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
