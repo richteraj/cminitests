@@ -1,22 +1,3 @@
-/*
-   cminitests.h -- Minimal C testing "framework"
-   Copyright 2017 A. Johannes RICHTER <albrechtjohannes.richter@gmail.com>
-
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-
 #undef NDEBUG
 #ifndef _GNU_SOURCE
 # define _GNU_SOURCE
@@ -36,8 +17,10 @@
 #define cmt_set_up()
 #define cmt_tear_down()
 
-int tests_count;
-int tests_failed;
+/** Total number of tests run with \ref CMT_TEST_CASE. */
+extern int tests_count;
+/** Total number of tests run with \ref CMT_TEST_CASE which failed. */
+extern int tests_failed;
 
 #define cmt_error(msg, ...) \
  fprintf (stderr, \
@@ -141,10 +124,24 @@ streqneq_array (char **sa1, char **sa2, bool cmp_equal)
   }
 
 
-#define require_strneq_array(sa1, sa2, message...) { \
-  if (!streqneq_array ((sa1), (sa2), false)) { \
-    cmt_error ("Arrays %s and %s are equal", #sa1, #sa2); \
-    return "Arrays match: " #message; } \
-  }
+int tests_count;
+int tests_failed;
 
 #endif /* not CMINITESTS_H_ */
+
+/* cminitests.h -- Minimal C testing "framework"
+   Copyright 2017 A. Johannes RICHTER <albrechtjohannes.richter@gmail.com>
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
