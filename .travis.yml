@@ -5,5 +5,5 @@ compiler:
     - clang
     - gcc
 script:
-    - "./configure && make --silent"
+    - "mkdir build && cd build && cmake .. && make --silent"
     - "cd build && ctest -V --schedule-random"
