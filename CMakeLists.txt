@@ -8,6 +8,7 @@ project (cminitests VERSION 0.1.0 LANGUAGES C)
 set (src_DIR ${PROJECT_SOURCE_DIR}/src)
 set (tests_DIR ${PROJECT_SOURCE_DIR}/tests)
 set (bin_DIR ${PROJECT_SOURCE_DIR}/bin)
+set (example_DIR ${PROJECT_SOURCE_DIR}/examples)
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${bin_DIR})
 
 include (CTest)
@@ -29,6 +30,7 @@ set (CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 
 add_subdirectory (${tests_DIR})
+add_subdirectory (${example_DIR})
 
 
 # Summary
