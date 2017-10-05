@@ -1,43 +1,32 @@
 #include "cminitests.h"
 
 char *
-Test1 (void)
+Test1 ()
 {
-  return "Expected this failure";
+    return "Expected this failure";
 }
 
-char *
-Test2 (void)
-{
-  return NULL;
-}
-
-char *
-Test3 (void)
-{
-  return NULL;
-}
+char *Test2 () { return NULL; }
+char *Test3 () { return NULL; }
 
 void
-all_tests (void)
+all_tests ()
 {
-  CMT_TEST_CASE (Test1,)
-  CMT_TEST_CASE (Test2,)
-  CMT_TEST_CASE (Test3,)
+    CMT_TEST_CASE (Test1, )
+    CMT_TEST_CASE (Test2, )
+    CMT_TEST_CASE (Test3, )
 }
 
 int
-main (void)
+main ()
 {
-  tests_count = 0;
-  tests_failed = 0;
+    tests_count = 0;
+    tests_failed = 0;
 
-  all_tests ();
+    all_tests ();
 
-  assert (tests_count == 3);
-  assert (tests_failed == 1);
-
-  return 0;
+    assert (tests_count == 3);
+    assert (tests_failed == 1);
 }
 
 /* test_test_count.c -- test number of tests

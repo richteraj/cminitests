@@ -3,58 +3,50 @@
 int setup_count;
 int teardown_count;
 
-void set_up (void)
+void
+set_up ()
 {
-  ++setup_count;
+    ++setup_count;
 }
 
 #undef cmt_tear_down
 #undef cmt_set_up
 #define cmt_set_up() set_up ()
-#define cmt_tear_down() {++teardown_count;}
-
-
-char *
-Test1 (void)
-{
-  return "Expected this failure";
-}
+#define cmt_tear_down()   \
+    {                     \
+        ++teardown_count; \
+    }
 
 char *
-Test2 (void)
+Test1 ()
 {
-  return NULL;
+    return "Expected this failure";
 }
 
-char *
-Test3 (void)
-{
-  return NULL;
-}
+char *Test2 () { return NULL; }
+char *Test3 () { return NULL; }
 
 void
-all_tests (void)
+all_tests ()
 {
-  CMT_TEST_CASE (Test1,)
-  CMT_TEST_CASE (Test2,)
-  CMT_TEST_CASE (Test3,)
+    CMT_TEST_CASE (Test1, )
+    CMT_TEST_CASE (Test2, )
+    CMT_TEST_CASE (Test3, )
 }
 
 int
-main (void)
+main ()
 {
-  tests_count = 0;
-  tests_failed = 0;
+    tests_count = 0;
+    tests_failed = 0;
 
-  setup_count = 0;
-  teardown_count = 0;
+    setup_count = 0;
+    teardown_count = 0;
 
-  all_tests ();
+    all_tests ();
 
-  assert (setup_count == 3);
-  assert (teardown_count == 3);
-
-  return 0;
+    assert (setup_count == 3);
+    assert (teardown_count == 3);
 }
 
 /* test_init.c -- test setup/teardown functions

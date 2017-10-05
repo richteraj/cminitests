@@ -2,83 +2,83 @@
 
 
 char *
-Require_on_true_passes (void)
+Require_on_true_passes ()
 {
-  require (1 && 2 > 1, "");
-  return NULL;
+    require (1 && 2 > 1, "");
+    return NULL;
 }
 
 char *
-Require_on_false_fails (void)
+Require_on_false_fails ()
 {
-  require (!1 || 0, "false != true");
-  return NULL;
+    require (!1 || 0, "false != true");
+    return NULL;
 }
 
 char *
-Require_not_on_true_fails (void)
+Require_not_on_true_fails ()
 {
-  require_not (1 > -5, "!false != true");
-  return NULL;
+    require_not (1 > -5, "!false != true");
+    return NULL;
 }
 
 char *
-Require_not_on_false_passes (void)
+Require_not_on_false_passes ()
 {
-  require_not (1 > 5, "");
-  return NULL;
+    require_not (1 > 5, "");
+    return NULL;
 }
 
 char *
-Strings_with_different_length_are_not_equal (void)
+Strings_with_different_length_are_not_equal ()
 {
-  require_strneq ("abc", "abcd", "");
-  return NULL;
+    require_strneq ("abc", "abcd", "");
+    return NULL;
 }
 
 char *
-Equal_strings_are_require_streq (void)
+Equal_strings_are_require_streq ()
 {
-  require_streq ("abc", "abc", "");
-  return NULL;
+    require_streq ("abc", "abc", "");
+    return NULL;
 }
 
 char *
-Unequal_strings_with_equal_size_are_not_require_streq (void)
+Unequal_strings_with_equal_size_are_not_require_streq ()
 {
-  require_strneq ("aBc", "AbC", "");
-  return NULL;
+    require_strneq ("aBc", "AbC", "");
+    return NULL;
 }
 
 char *
-Test_compare_string_argv (void)
+Test_compare_string_argv ()
 {
-  char *sa1[] = {"abc", "def", NULL};
-  char *sa2[] = {"abc", "def", NULL};
-  require_streq_array (sa1, sa2, "");
+    char *sa1[] = {"abc", "def", NULL};
+    char *sa2[] = {"abc", "def", NULL};
+    require_streq_array (sa1, sa2, "");
 
-  char *sa3[] = {NULL};
-  char *sa4[] = {NULL};
-  require_streq_array (sa3, sa4, "");
+    char *sa3[] = {NULL};
+    char *sa4[] = {NULL};
+    require_streq_array (sa3, sa4, "");
 
-  char *sa5[] = {NULL};
-  char *sa6[] = {"1", NULL};
-  require_strneq_array (sa5, sa6, "");
+    char *sa5[] = {NULL};
+    char *sa6[] = {"1", NULL};
+    require_strneq_array (sa5, sa6, "");
 
-  return NULL;
+    return NULL;
 }
 
 int
 main ()
 {
-  assert (Require_on_true_passes() == NULL);
-  assert (Require_on_false_fails() != NULL);
-  assert (Require_not_on_true_fails() != NULL);
-  assert (Require_not_on_false_passes() == NULL);
-  assert (Strings_with_different_length_are_not_equal() == NULL);
-  assert (Unequal_strings_with_equal_size_are_not_require_streq() == NULL);
-  assert (Equal_strings_are_require_streq() == NULL);
-  assert (Test_compare_string_argv() == NULL);
+    assert (Require_on_true_passes () == NULL);
+    assert (Require_on_false_fails () != NULL);
+    assert (Require_not_on_true_fails () != NULL);
+    assert (Require_not_on_false_passes () == NULL);
+    assert (Strings_with_different_length_are_not_equal () == NULL);
+    assert (Unequal_strings_with_equal_size_are_not_require_streq () == NULL);
+    assert (Equal_strings_are_require_streq () == NULL);
+    assert (Test_compare_string_argv () == NULL);
 }
 
 /* test_assertions.c -- test provided assertions
