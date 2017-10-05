@@ -52,7 +52,7 @@ struct _colorful_s
     const char *brown;
     /** Text after this is cyan.  */
     const char *cyan;
-}
+};
 
 /** Global object with the escape sequences for terminal coloring.  If \ref
  * COLOR_MODE is not true all colors will be an empty string.  */
