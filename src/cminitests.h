@@ -73,15 +73,15 @@ set_short_name (char const *long_name)
         fprintf (                                                       \
             stderr, "%s:%d: %s: %sfailed%s: \n >>>\t%s" #msg, __FILE__, \
             __LINE__, __func__, _colorful.cyan, _colorful.none,         \
-            _colorful.brown, ##__VA_ARGS__);                            \
+            _colorful.brown, __VA_ARGS__);                              \
         fprintf (stderr, "%s\n", _colorful.none);                       \
     }
 
-#define CMT_TEST_CASE(test, args...)                              \
+#define CMT_TEST_CASE(test, ...)                                  \
     {                                                             \
         ++tests_count;                                            \
         cmt_set_up ();                                            \
-        char *test##_result = test (args);                        \
+        char *test##_result = test (__VA_ARGS__);                 \
         cmt_tear_down ();                                         \
         if (test##_result)                                        \
         {                                                         \
@@ -126,21 +126,21 @@ set_short_name (char const *long_name)
         }                                                                     \
     }
 
-#define require(cond, message...)                           \
+#define require(cond, ...)                                  \
     if (!(cond))                                            \
     {                                                       \
         cmt_error ("Assertion require '%s' failed", #cond); \
-        return #cond " NOT true: " #message;                \
+        return #cond " NOT true: " #__VA_ARGS__;            \
     }
 
-#define require_not(cond, message...)                           \
+#define require_not(cond, ...)                                  \
     if ((cond))                                                 \
     {                                                           \
         cmt_error ("Assertion require_not '%s' failed", #cond); \
-        return #cond " NOT false: " #message;                   \
+        return #cond " NOT false: " #__VA_ARGS__;               \
     }
 
-#define require_streq(s1, s2, message...)                                    \
+#define require_streq(s1, s2, ...)                                           \
     {                                                                        \
         size_t s1_len = strlen (s1);                                         \
         size_t s2_len = strlen (s2);                                         \
@@ -148,22 +148,22 @@ set_short_name (char const *long_name)
         {                                                                    \
             cmt_error (                                                      \
                 "Length '%s' != '%s' (%zd != %zd)", s1, s2, s1_len, s2_len); \
-            return #s1 " != " #s2 ": " #message;                             \
+            return #s1 " != " #s2 ": " #__VA_ARGS__;                         \
         }                                                                    \
         else if (strcmp (s1, s2))                                            \
         {                                                                    \
             cmt_error ("'%s' != '%s'", s1, s2);                              \
-            return #s1 " != " #s2 ": " #message;                             \
+            return #s1 " != " #s2 ": " #__VA_ARGS__;                         \
         }                                                                    \
     }
 
-#define require_strneq(s1, s2, message...)       \
-    {                                            \
-        if (!strcmp (s1, s2))                    \
-        {                                        \
-            cmt_error ("'%s' == '%s'", s1, s2);  \
-            return #s1 " == " #s2 ": " #message; \
-        }                                        \
+#define require_strneq(s1, s2, ...)                  \
+    {                                                \
+        if (!strcmp (s1, s2))                        \
+        {                                            \
+            cmt_error ("'%s' == '%s'", s1, s2);      \
+            return #s1 " == " #s2 ": " #__VA_ARGS__; \
+        }                                            \
     }
 
 bool
@@ -197,21 +197,21 @@ streqneq_array (char **sa1, char **sa2, bool cmp_equal)
         return cmp_equal;
 }
 
-#define require_streq_array(sa1, sa2, message...)                     \
+#define require_streq_array(sa1, sa2, ...)                            \
     {                                                                 \
         if (!streqneq_array ((sa1), (sa2), true))                     \
         {                                                             \
             cmt_error ("Arrays %s and %s are not equal", #sa1, #sa2); \
-            return "Arrays mismatch: " #message;                      \
+            return "Arrays mismatch: " #__VA_ARGS__;                  \
         }                                                             \
     }
 
-#define require_strneq_array(sa1, sa2, message...)                \
+#define require_strneq_array(sa1, sa2, ...)                       \
     {                                                             \
         if (!streqneq_array ((sa1), (sa2), false))                \
         {                                                         \
             cmt_error ("Arrays %s and %s are equal", #sa1, #sa2); \
-            return "Arrays match: " #message;                     \
+            return "Arrays match: " #__VA_ARGS__;                 \
         }                                                         \
     }
 
