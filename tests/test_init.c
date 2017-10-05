@@ -1,7 +1,7 @@
 #include "cminitests.h"
 
-int setup_count;
-int teardown_count;
+static int setup_count;
+static int teardown_count;
 
 void
 set_up ()

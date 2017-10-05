@@ -1,11 +1,11 @@
+#ifndef CMINITESTS_H_
+#define CMINITESTS_H_
+
 #undef NDEBUG
 
 #ifndef COLOR_MODE
     #define COLOR_MODE 1
 #endif /* not COLOR_MODE */
-
-#ifndef CMINITESTS_H_
-#define CMINITESTS_H_
 
 #include <assert.h>
 #include <errno.h>
@@ -174,7 +174,7 @@ streqneq_array (char **sa1, char **sa2, bool cmp_equal)
     int pos = 0;
     while (*sa1_pos && *sa2_pos)
     {
-        if (strcmp (*sa1_pos, *sa2_pos))
+        if (strcmp (*sa1_pos, *sa2_pos) != 0)
         {
             if (cmp_equal)
                 cmt_error (
