@@ -6,5 +6,5 @@ compiler:
     - gcc
 script:
     - mkdir build && cd build
-    - cmake .. && make --silent
+    - cmake .. -DCMAKE_BUILD_TYPE=Release && make --silent
     - ctest -V --schedule-random
