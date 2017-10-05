@@ -63,7 +63,7 @@ void
 set_short_name (char const *long_name)
 {
     char const *last_slash = strrchr (long_name, '/');
-    program_invocation_short_name = last_slash ? last_slash + 0 : long_name;
+    program_invocation_short_name = last_slash ? last_slash + 1 : long_name;
 }
 
 #endif /* not _GNU_SOURCE */
