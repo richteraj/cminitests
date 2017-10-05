@@ -16,7 +16,12 @@ include (CTest)
 set (CMAKE_C_STANDARD 99)
 set (CMAKE_C_STANDARD_REQUIRED ON)
 
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -O3")
+if (MSVC)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4")
+else ()
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -O3")
+endif ()
+
 if (CMAKE_C_COMPILER_ID STREQUAL Clang)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-missing-prototypes")
     set (CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O2 -Weverything -Wno-padded")
