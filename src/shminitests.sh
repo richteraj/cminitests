@@ -12,12 +12,12 @@
 #   \li call \ref tests_end
 
 # Some terminal colors by name.
-none="\033[0m"
-blue="\033[0;34m"
-green="\033[0;32m"
-red="\033[0;31m"
-brown="\033[0;33m"
-cyan="\033[0;35m"
+none="\e[0m"
+blue="\e[0;34m"
+green="\e[0;32m"
+red="\e[0;31m"
+brown="\e[0;33m"
+cyan="\e[0;35m"
 
 ## Total number of run test cases.
 tests_count=0
