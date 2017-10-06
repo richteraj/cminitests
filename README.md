@@ -61,6 +61,8 @@ like this:
 
     // Tests which access the globals...
 
+Or, alternatively, only `#undef` and use the same name
+(`cmt_set_up`/`cmt_tear_down`) for the new function/macro afterwards.
 Currently, it is assumed that there can be no assertion violation within those
 functions.
 
