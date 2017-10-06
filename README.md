@@ -1,6 +1,14 @@
 CMiniTests
 ========================================================================
 
+[![Travis CI build status][travis_img]][travis_link]
+[![AppVeyor build status][appv_img]][appv_link]
+
+[travis_img]: https://travis-ci.org/richteraj/cminitests.svg?branch=master
+[travis_link]: https://travis-ci.org/richteraj/cminitests
+[appv_img]: https://ci.appveyor.com/api/projects/status/qnnhnx7p5xhp99d9/branch/master?svg=true
+[appv_link]: https://ci.appveyor.com/project/richteraj/cminitests/branch/master
+
 A header only minimal C testing "framework" with some nicer output:
 
 ![A picture of sample output](doc/cminitests_sample.png)
@@ -61,6 +69,8 @@ like this:
 
     // Tests which access the globals...
 
+Or, alternatively, only `#undef` and use the same name
+(`cmt_set_up`/`cmt_tear_down`) for the new function/macro afterwards.
 Currently, it is assumed that there can be no assertion violation within those
 functions.
 
