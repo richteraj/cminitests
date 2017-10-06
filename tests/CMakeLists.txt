@@ -7,6 +7,15 @@ foreach (test_source IN LISTS srcs)
     add_test (NAME ${test_target} COMMAND ${test_target})
 endforeach (test_source)
 
+if (${sh_PROG_HAVE})
+    file (GLOB srcs test_*.sh)
+    foreach (sh_test_source IN LISTS srcs)
+        get_filename_component (test_target ${sh_test_source} NAME_WE)
+        add_test (NAME ${test_target}
+            COMMAND ${sh_PROG} "${sh_test_source}" "${src_DIR}/shminitests.sh")
+    endforeach (sh_test_source)
+endif ()
+
 # CMakeLists.txt - CMake tests files
 # Copyright 2017 A. Johannes RICHTER <albrechtjohannes.richter@gmail.com>
 #

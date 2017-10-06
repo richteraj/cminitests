@@ -5,6 +5,16 @@ target_include_directories (${test_target} PRIVATE ${src_DIR})
 add_test (NAME ${test_target} COMMAND ${test_target})
 set_tests_properties (${test_target} PROPERTIES WILL_FAIL 1)
 
+if (${sh_PROG_HAVE})
+    set (sh_skeleton "test_sh_skeleton")
+    add_test (
+        NAME ${sh_skeleton}
+        COMMAND ${sh_PROG}
+            "${CMAKE_CURRENT_SOURCE_DIR}/test_skeleton.sh"
+            "${src_DIR}/shminitests.sh")
+    set_tests_properties (${sh_skeleton} PROPERTIES WILL_FAIL 1)
+endif ()
+
 # CMakeLists.txt - CMake tests files for examples
 # Copyright 2017 A. Johannes RICHTER <albrechtjohannes.richter@gmail.com>
 #

@@ -32,6 +32,14 @@ elseif (CMAKE_C_COMPILER_ID STREQUAL GNU)
 endif ()
 set (CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
+find_program (sh_PROG sh)
+if (sh_PROG STREQUAL "sh_PROG-NOTFOUND")
+    set (sh_PROG_HAVE 0)
+    message (AUTHOR_WARNING
+        "shminitests.sh can't be tested: Could not find 'sh' shell")
+else ()
+    set (sh_PROG_HAVE 1)
+endif ()
 
 add_subdirectory (${tests_DIR})
 add_subdirectory (${example_DIR})

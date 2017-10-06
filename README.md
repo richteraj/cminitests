@@ -15,7 +15,7 @@ A header only minimal C testing "framework" with some nicer output:
 
 Simply copy the file `cminitests.h` into the test directory and include it into
 the test executable.
-A test skeleton is inside the `examples` directory.
+Test skeletons are inside the `examples` directory.
 
 Usage
 ------------------------------------------------------------------------
