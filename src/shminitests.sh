@@ -40,14 +40,14 @@ evaluate_test ()
     test_exit=${test_exit:-$?}
     tests_count=`expr $tests_count + 1`
 
-    echo -n "$test_case: " >&2
+    printf "$test_case: " >&2
     if [ "$test_exit" -eq 0 ]; then
-        echo "${green}passed$none." >&2
+        printf "${green}passed$none.\n" >&2
     else
-        echo "${cyan}failed$none." >&2
+        printf "${cyan}failed$none.\n" >&2
         tests_failed=`expr $tests_failed + 1`
         if [ -n "$1" ]; then
-            echo " >>> $brown$1$none" >&2
+            printf " >>> $brown$1$none\n" >&2
         fi
     fi
     test_exit=
@@ -78,20 +78,20 @@ tests_start ()
     tests_failed=0
     test_case=""
     test_exit=
-    echo "${blue}------ RUNNING: `basename $0`$none" >&2
+    printf "${blue}------ RUNNING: `basename $0`$none\n" >&2
 }
 
 ## Call after all test cases.  Exits with 1 if \ref tests_failed is not 0 or
 # exits with 0 else.
 tests_end ()
 {
-    echo "${blue}------ FINISHED: `basename $0`$none" >&2
+    printf "${blue}------ FINISHED: `basename $0`$none\n" >&2
     if [ "$tests_failed" -eq 0 ]; then
-        echo "${green}------ ALL $tests_count tests passed.$none" >&2
+        printf "${green}------ ALL $tests_count tests passed.$none\n" >&2
         exit 0
     else
-        echo "${cyan}------ $tests_failed of $tests_count" \
-            "tests did NOT pass.$none" >&2
+        printf "${cyan}------ $tests_failed of $tests_count %s$none\n" \
+            "tests did NOT pass." >&2
         exit 1
     fi
 }
