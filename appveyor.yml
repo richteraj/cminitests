@@ -7,10 +7,10 @@ build_script:
 
         cd build
 
-        cmake c:\projects\source -G"Visual Studio 14" -DCMAKE_BUILD_TYPE=Release
+        cmake c:\projects\source -G "Visual Studio 14"
 
-        cmake --build . --target
+        cmake --build . --config Release
 
 test_script:
-    - cmd: ctest -V --schedule-random
+    - cmd: ctest -V --schedule-random -C Release
 
