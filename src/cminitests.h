@@ -1,11 +1,17 @@
+/** \file
+ * Minimal C testing "framework".  */
+
 #ifndef CMINITESTS_H_
 #define CMINITESTS_H_
 
 #undef NDEBUG
 
-#ifndef COLOR_MODE
-    #define COLOR_MODE 1
-#endif /* not COLOR_MODE */
+/** \def CMT_COLOR_MODE
+ * Enables terminal color escape sequences if evaluating to true.  Default is 1.
+ */
+#ifndef CMT_COLOR_MODE
+#define CMT_COLOR_MODE 1
+#endif /* not CMT_COLOR_MODE */
 
 #include <assert.h>
 #include <errno.h>
@@ -14,29 +20,44 @@
 #include <stdlib.h>
 #include <string.h>
 
+/** Setup function is called before \ref CMT_TEST_CASE calls the test function.
+ * By default this does nothing.  To define a setup function redefine the
+ * macro to call this function.  */
 #define cmt_set_up()
+/** Cleanup function is called after the by \ref CMT_TEST_CASE called test
+ * function finishes.  By default this does nothing.  To define a tear-down
+ * function redefine the macro to call this function.  */
 #define cmt_tear_down()
 
-/** Total number of tests run with \ref CMT_TEST_CASE. */
+/** Total number of tests run with \ref CMT_TEST_CASE.  */
 extern int tests_count;
-/** Total number of tests run with \ref CMT_TEST_CASE which failed. */
+/** Total number of tests run with \ref CMT_TEST_CASE which failed.  */
 extern int tests_failed;
 
-/** Escape sequences for terminal coloring.  If \c COLOR_MODE is not true
- *  all colors will be an empty string.
- *  Print the color string \c _colorful.<em>\<color\></em> to a terminal
- *  output to switch the text color and print the \c _colorful.none value to
- *  reset the default color.
- */
-static struct _colorful_s {
+/** Escape sequences for terminal coloring.
+ * Print the color string `_colorful.`<em>color</em> to a terminal output to
+ * switch the text color and print the `_colorful.none` value to reset the
+ * default color.  */
+struct _colorful_s
+{
+    /** Color reset.  */
     const char *none;
+    /** Text after this is blue.  */
     const char *blue;
+    /** Text after this is green.  */
     const char *green;
+    /** Text after this is red.  */
     const char *red;
+    /** Text after this is brown/orange.  */
     const char *brown;
+    /** Text after this is cyan.  */
     const char *cyan;
-} _colorful = {
-#if COLOR_MODE
+};
+
+/** Global object with the escape sequences for terminal coloring.  If \ref
+ * CMT_COLOR_MODE is not true all colors will be an empty string.  */
+static const struct _colorful_s _colorful = {
+#if CMT_COLOR_MODE
     .none = "\033[0m",
     .blue = "\033[0;34m",
     .green = "\033[0;32m",
@@ -57,8 +78,14 @@ static struct _colorful_s {
 #define set_short_name(long_name) /* NULL */
 #else /* not _GNU_SOURCE */
 
+/** A string of a short name with which the program was called.  */
 static char const *program_invocation_short_name = NULL;
 
+/** Let \ref program_invocation_short_name point to the position after the last
+ * '/' of \a long_name or to \a long_name directly if there are no slashes.
+ *
+ * \param long_name The file name from which to get the base name.  May not
+ * change as long as \ref program_invocation_short_name is in use.  */
 void
 set_short_name (char const *long_name)
 {
@@ -68,6 +95,15 @@ set_short_name (char const *long_name)
 
 #endif /* not _GNU_SOURCE */
 
+/** Print a colored (depending on \ref _colorful_s) error message to `stderr`.
+ * The output is of the form:
+ * \code
+ *   file:line-number: function: failed:
+ *    >>>   formated-msg
+ * \endcode
+ *
+ * \param msg A `printf` format string.
+ * \param ... Arguments to the format string.  */
 #define cmt_error(msg, ...)                                             \
     {                                                                   \
         fprintf (                                                       \
@@ -77,6 +113,16 @@ set_short_name (char const *long_name)
         fprintf (stderr, "%s\n", _colorful.none);                       \
     }
 
+/** Register a test case function.  Call \ref cmt_set_up and \ref cmt_tear_down
+ * before the \a test function and after the function finished, respectively.
+ * Update \ref tests_count and \ref tests_failed accordingly.  Print to `stderr`
+ * whether the test failed or succedded and if it failed print a message which
+ * contains the returned string.
+ *
+ * \param test A test function which returns `NULL` on success or an error
+ * string if failed.  Must have the parameter types that fit the `__VA_ARGS__`
+ * argument (or none).
+ * \param ... The parameters to pass on to \a test.  May be none.  */
 #define CMT_TEST_CASE(test, ...)                                  \
     {                                                             \
         ++tests_count;                                            \
@@ -96,6 +142,15 @@ set_short_name (char const *long_name)
         }                                                         \
     }
 
+/** Execute the \a tests_wrapper function which should contain all the tests
+ * registered with \ref CMT_TEST_CASE.  Evaluate the resulting \ref tests_count
+ * and \ref tests_failed values and print the status.
+ * This macro generates `main`.
+ *
+ * \param tests_wrapper A function with no parameters and no return value (i.e.
+ * it is ignored) which contains the test cases.
+ * \return 0 if \ref tests_failed was 0 after calling \a tests_wrapper.
+ * Otherwise non-zero.  */
 #define CMT_RUN_TESTS(tests_wrapper)                                          \
     int main (int argc, char **argv)                                          \
     {                                                                         \
@@ -126,6 +181,12 @@ set_short_name (char const *long_name)
         }                                                                     \
     }
 
+/** Assert that \a cond is true.  Otherwise return from the enclosing function
+ * with a message that contains `__VA_ARGS__`.
+ *
+ * \param cond The condition expression to evaluate.
+ * \param ... Strings which describe the failed condition.  They will be
+ * directly concatenated.  */
 #define require(cond, ...)                                  \
     if (!(cond))                                            \
     {                                                       \
@@ -133,6 +194,8 @@ set_short_name (char const *long_name)
         return #cond " NOT true: " #__VA_ARGS__;            \
     }
 
+/** Assert that \a cond is false.
+ * \copydetails require  */
 #define require_not(cond, ...)                                  \
     if ((cond))                                                 \
     {                                                           \
@@ -140,6 +203,14 @@ set_short_name (char const *long_name)
         return #cond " NOT false: " #__VA_ARGS__;               \
     }
 
+/** Assert that strings \a s1 and \a s2 are equal according to `strcmp`.
+ * Otherwise return from the enclosing function with a message that contains
+ * `__VA_ARGS__`.
+ *
+ * \param s1 The first string.
+ * \param s2 The second string.
+ * \param ... Strings which describe the failed condition.  They will be
+ * directly concatenated.  */
 #define require_streq(s1, s2, ...)                                           \
     {                                                                        \
         size_t s1_len = strlen (s1);                                         \
@@ -157,6 +228,8 @@ set_short_name (char const *long_name)
         }                                                                    \
     }
 
+/** Assert that strings \a s1 and \a s2 are not equal according to `strcmp`.
+ * \copydetails require_streq  */
 #define require_strneq(s1, s2, ...)                  \
     {                                                \
         if (!strcmp (s1, s2))                        \
@@ -166,6 +239,17 @@ set_short_name (char const *long_name)
         }                                            \
     }
 
+/** Helper function for \ref require_streq_array and \ref require_strneq_array.
+ * Does the actual comparison.
+ *
+ * \param sa1 The first string vector.
+ * \param sa2 The second string vector.
+ * \param cmp_equal If true compare for equality.  If false compare for
+ * inequality.
+ * \return
+ *   \li \a cmp_equal is true: true if \a sa1 and \a sa2 are equal else false.
+ *   \li \a cmp_equal is false: true if \a sa1 and \a sa2 are not equal else
+ *   false.  */
 bool
 streqneq_array (char **sa1, char **sa2, bool cmp_equal)
 {
@@ -197,6 +281,17 @@ streqneq_array (char **sa1, char **sa2, bool cmp_equal)
         return cmp_equal;
 }
 
+/** Assert that the string vectors \a as1 and \a sa2 are equal.  Otherwise
+ * return from the enclosing function with a message that contains
+ * `__VA_ARGS__`.
+ *
+ * A string vector has the same form as `argv` of `main`, i.e. it is an array of
+ * `char *` with a terminating `NULL` entry.
+ *
+ * \param sa1 The first `NULL`-terminated `char **` string vector.
+ * \param sa2 The second string vector.
+ * \param ... Strings which describe the failed condition.  They will be
+ * directly concatenated.  */
 #define require_streq_array(sa1, sa2, ...)                            \
     {                                                                 \
         if (!streqneq_array ((sa1), (sa2), true))                     \
@@ -206,6 +301,8 @@ streqneq_array (char **sa1, char **sa2, bool cmp_equal)
         }                                                             \
     }
 
+/** Assert that the string vectors \a as1 and \a sa2 are not equal.
+ * \copydetails require_streq_array  */
 #define require_strneq_array(sa1, sa2, ...)                       \
     {                                                             \
         if (!streqneq_array ((sa1), (sa2), false))                \
@@ -220,8 +317,7 @@ int tests_failed;
 
 #endif /* not CMINITESTS_H_ */
 
-/* cminitests.h -- Minimal C testing "framework"
-   Copyright 2017 A. Johannes RICHTER <albrechtjohannes.richter@gmail.com>
+/* Copyright 2017 A. Johannes RICHTER <albrechtjohannes.richter@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
