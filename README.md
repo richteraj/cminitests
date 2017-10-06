@@ -109,8 +109,7 @@ corresponding strings of the argv vectors `sa1` and `sa2` pass for
 `require_strneq`.
 
 
-Remarks
-------------------------------------------------------------------------
+### Remarks
 
 You should not use `assert` or other functions which abort the program otherwise
 the other tests will not run.
@@ -118,6 +117,73 @@ the other tests will not run.
 Since each `require*` macro will return directly on failure resources may need
 to be used via `cmt_set_up`/`cmt_tear_down`.  Although memory leaks are
 acceptable in failed tests, I believe.
+
+
+Tests with `sh`
+------------------------------------------------------------------------
+
+Sometimes it is easier to test the outside behaviour of an CLI (command line
+interface) program with a shell.  `shminitests.sh` is for this purpose.  The
+output format is identical to `cminitests.h` but the setup and calls to the test
+cases has to be done manually.
+
+A basic usage is as follows:
+
+    . shminitests.sh
+
+    tests_start
+
+    test_case="The first test case"
+    # Some evaluating of the program, e.g. `grep` something
+    test_exit=$?
+    evaluate_test "This went wrong"
+
+    test_case"Another test case"
+    # Evaluation...
+    # ...and use the exit code directly
+    evaluate_test
+
+    # ...
+
+    tests_end
+
+1. Source the test "framework".  It is convenient to pass the path to this
+   script as a parameter via the overarching test environment.
+2. Call `tests_start`.
+3. Do the testing.
+    - Set `test_case` to a string that describes the test.
+    - Execute the test commands.
+    - Set `test_exit` to 0 if your test case should pass or a non-zero value
+    otherwise.  This is optional since `$?` will be used if `test_exit`is unset
+    or a zero-length string
+    - Call `evaluate_test` with an optional parameter that describes the error.
+4. Repeat 3. for other tests.
+5. Call `tests_end` which will exit with 0 if none of the tests failed or with 1
+   else.
+
+If you want to bundle the test cases as functions there is also the
+`execute_test_case` function:
+
+    # ...
+    My_test_case ()
+    {
+        # ...
+        # $? as test result.
+    }
+
+    My_other_test_case ()
+    {
+        # ...
+    }
+
+    execute_test_case My_test_case "My_test_case_description" "What_went_wrong"
+    execute_test_case My_other_test_case "" "What_went_wrong_now"
+    # ...
+
+This function calls the first argument (your test case) with an optional
+description (`test_case` will be set to this or the function name if none was
+given).  Then `evaluate_test` with the optional error message as parameter is
+called.
 
 ________________________________________________________________________
 
