@@ -6,12 +6,12 @@
 
 #undef NDEBUG
 
-/** \def COLOR_MODE
+/** \def CMT_COLOR_MODE
  * Enables terminal color escape sequences if evaluating to true.  Default is 1.
  */
-#ifndef COLOR_MODE
-#define COLOR_MODE 1
-#endif /* not COLOR_MODE */
+#ifndef CMT_COLOR_MODE
+#define CMT_COLOR_MODE 1
+#endif /* not CMT_COLOR_MODE */
 
 #include <assert.h>
 #include <errno.h>
@@ -55,9 +55,9 @@ struct _colorful_s
 };
 
 /** Global object with the escape sequences for terminal coloring.  If \ref
- * COLOR_MODE is not true all colors will be an empty string.  */
+ * CMT_COLOR_MODE is not true all colors will be an empty string.  */
 static const struct _colorful_s _colorful = {
-#if COLOR_MODE
+#if CMT_COLOR_MODE
     .none = "\033[0m",
     .blue = "\033[0;34m",
     .green = "\033[0;32m",
