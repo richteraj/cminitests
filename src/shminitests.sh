@@ -78,14 +78,14 @@ tests_start ()
     tests_failed=0
     test_case=""
     test_exit=
-    printf "${blue}------ RUNNING: `basename $0`$none\n" >&2
+    printf "${blue}------ RUNNING: `basename \"$0\"`$none\n" >&2
 }
 
 ## Call after all test cases.  Exits with 1 if \ref tests_failed is not 0 or
 # exits with 0 else.
 tests_end ()
 {
-    printf "${blue}------ FINISHED: `basename $0`$none\n" >&2
+    printf "${blue}------ FINISHED: `basename \"$0\"`$none\n" >&2
     if [ "$tests_failed" -eq 0 ]; then
         printf "${green}------ ALL $tests_count tests passed.$none\n" >&2
         exit 0
