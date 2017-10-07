@@ -22,24 +22,26 @@ Usage
 
 A simple test executable could look like this:
 
-    #include "cminitests.h"
+```c
+#include "cminitests.h"
 
-    char * My_test ()
-    {
-        // Collect some data
-        // ...
-        require (data == 1, "Data was not 1");
-        // ...
-        return NULL;
-    }
+char * My_test ()
+{
+    // Collect some data
+    // ...
+    require (data == 1, "Data was not 1");
+    // ...
+    return NULL;
+}
 
-    void all_tests ()
-    {
-        CMT_TEST_CASE (My_test,)
-        // Further test cases...
-    }
+void all_tests ()
+{
+    CMT_TEST_CASE (My_test,)
+    // Further test cases...
+}
 
-    CMT_RUN_TESTS (all_tests)
+CMT_RUN_TESTS (all_tests)
+```
 
 1. Write a test case `My_test` as a function which returns a string that is
    `NULL` on success or represents an error message.  The `require*` macros will
@@ -57,17 +59,19 @@ If the macros `cmt_set_up` and `cmt_tear_down` are redefined they will be called
 before and after each `CMT_TEST_CASE` block, respectively.  This can be done
 like this:
 
-    #include "cminitests.h"
+```c
+#include "cminitests.h"
 
-    void setup () { /* Set up some globals... */ }
-    void tear_down () { /* Clean up those globals... */ }
+void setup () { /* Set up some globals... */ }
+void tear_down () { /* Clean up those globals... */ }
 
-    #undef cmt_tear_down
-    #define cmt_set_up() set_up ()
-    #undef cmt_set_up
-    #define cmt_tear_down() tear_down ()
+#undef cmt_tear_down
+#define cmt_set_up() set_up ()
+#undef cmt_set_up
+#define cmt_tear_down() tear_down ()
 
-    // Tests which access the globals...
+// Tests which access the globals...
+```
 
 Or, alternatively, only `#undef` and use the same name
 (`cmt_set_up`/`cmt_tear_down`) for the new function/macro afterwards.
@@ -77,22 +81,23 @@ functions.
 It is possible to define arguments (a variable number) which can be passed to
 the test function.  Those are simply passed via `CMT_TEST_CASE`, e.g.
 
-    char * My_parameterized_test (int x, int y) { /* ... */ }
+```c
+char * My_parameterized_test (int x, int y) { /* ... */ }
 
-    void all_tests ()
-    {
-        CMT_TEST_CASE (My_parameterized_test, 1, 0)
-        CMT_TEST_CASE (My_parameterized_test, 2, -1)
-        // Further test cases...
-    }
+void all_tests ()
+{
+    CMT_TEST_CASE (My_parameterized_test, 1, 0)
+    CMT_TEST_CASE (My_parameterized_test, 2, -1)
+    // Further test cases...
+}
 
-    CMT_RUN_TESTS (all_tests)
-
+CMT_RUN_TESTS (all_tests)
+```
 
 ### Macros to test assertions
 
 - The `message...` parameter is the message string(s) to give if the assertion
-failed.
+failed.  It is *not* evaluated as a `printf`-format string.
 - `require(cond, message...)`: Passes if the expression `cond` evaluates to
 *true*.
 - `require_not(cond, message...)`: Passes if the expression `cond` evaluates to
@@ -122,30 +127,32 @@ acceptable in failed tests, I believe.
 Tests with `sh`
 ------------------------------------------------------------------------
 
-Sometimes it is easier to test the outside behaviour of an CLI (command line
+Sometimes it is easier to test the outside behaviour of a CLI (command line
 interface) program with a shell.  `shminitests.sh` is for this purpose.  The
 output format is identical to `cminitests.h` but the setup and calls to the test
 cases has to be done manually.
 
 A basic usage is as follows:
 
-    . shminitests.sh
+```sh
+. shminitests.sh
 
-    tests_start
+tests_start
 
-    test_case="The first test case"
-    # Some evaluating of the program, e.g. `grep` something
-    test_exit=$?
-    evaluate_test "This went wrong"
+test_case="The first test case"
+# Some evaluating of the program, e.g. `grep` something
+test_exit=$?
+evaluate_test "This went wrong"
 
-    test_case"Another test case"
-    # Evaluation...
-    # ...and use the exit code directly
-    evaluate_test
+test_case"Another test case"
+# Evaluation...
+# ...and use the exit code directly
+evaluate_test
 
-    # ...
+# ...
 
-    tests_end
+tests_end
+```
 
 1. Source the test "framework".  It is convenient to pass the path to this
    script as a parameter via the overarching test environment.
@@ -164,26 +171,28 @@ A basic usage is as follows:
 If you want to bundle the test cases as functions there is also the
 `execute_test_case` function:
 
+```sh
+# ...
+My_test_case ()
+{
     # ...
-    My_test_case ()
-    {
-        # ...
-        # $? as test result.
-    }
+    # $? as test result.
+}
 
-    My_other_test_case ()
-    {
-        # ...
-    }
-
-    execute_test_case My_test_case "My_test_case_description" "What_went_wrong"
-    execute_test_case My_other_test_case "" "What_went_wrong_now"
+My_other_test_case ()
+{
     # ...
+}
+
+execute_test_case My_test_case "My_test_case_description" "What_went_wrong"
+execute_test_case My_other_test_case "" "What_went_wrong_now"
+# ...
+```
 
 This function calls the first argument (your test case) with an optional
 description (`test_case` will be set to this or the function name if none was
-given).  Then `evaluate_test` with the optional error message as parameter is
-called.
+given).  Then `evaluate_test` with the optional error message as the parameter
+is called.
 
 ________________________________________________________________________
 
