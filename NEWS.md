@@ -1,19 +1,24 @@
 <!-- CMiniTests -- NEWS -->
 
-Noteworthy changes in release ?.? (????-??-??) [unstable]
+Noteworthy changes in release 0.2 (2017-10-07) [stable]
 ========================================================================
-
-Bug fixes
-------------------------------------------------------------------------
 
 New features
 ------------------------------------------------------------------------
 
+- an analogous Bourn shell compatible `shminitests.sh`
+
 Changes in behavior
 ------------------------------------------------------------------------
 
+- terminal color output if not compiled with `CMT_COLOR_MODE=0` (or as an
+environment variable for `shminitests.sh`)
+
 Improvements
 ------------------------------------------------------------------------
+
+- `cimitests.h` is strictly standard conforming and works also in a Windows
+environment.
 
 ________________________________________________________________________
 

@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.0)
 set (CMAKE_BUILD_TYPE Debug CACHE STRING
     "Debug, Release, RelWithDebInfo or MinSizeRel")
 
-project (cminitests VERSION 0.1.0 LANGUAGES C)
+project (cminitests VERSION 0.2.0 LANGUAGES C)
 
 set (src_DIR ${PROJECT_SOURCE_DIR}/src)
 set (tests_DIR ${PROJECT_SOURCE_DIR}/tests)
