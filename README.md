@@ -62,7 +62,7 @@ like this:
 ```c
 #include "cminitests.h"
 
-void setup () { /* Set up some globals... */ }
+void set_up () { /* Set up some globals... */ }
 void tear_down () { /* Clean up those globals... */ }
 
 #undef cmt_tear_down
