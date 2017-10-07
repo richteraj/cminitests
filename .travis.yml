@@ -4,8 +4,3 @@ language: c
 compiler:
     - clang
     - gcc
-script:
-    - mkdir build && cd build
-    - cmake .. -DCMAKE_BUILD_TYPE=Release
-    - cmake --build . --target
-    - ctest -V --schedule-random
