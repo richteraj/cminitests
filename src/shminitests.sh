@@ -11,13 +11,18 @@
 #   \li repeat for other test cases
 #   \li call \ref tests_end
 
-# Some terminal colors by name.
-none="\033[0m"
-blue="\033[0;34m"
-green="\033[0;32m"
-red="\033[0;31m"
-brown="\033[0;33m"
-cyan="\033[0;35m"
+## Enable terminal colors by setting this to 1 (also default if unset).  Other
+# values disable colors.
+CMT_COLOR_MODE=${CMT_COLOR_MODE-1}
+if [ "$CMT_COLOR_MODE" = 1 ]
+then
+    none="\033[0m"
+    blue="\033[0;34m"
+    green="\033[0;32m"
+    red="\033[0;31m"
+    brown="\033[0;33m"
+    cyan="\033[0;35m"
+fi
 
 ## Total number of run test cases.
 tests_count=0
@@ -78,19 +83,19 @@ tests_start ()
     tests_failed=0
     test_case=""
     test_exit=
-    printf "${blue}------ RUNNING: `basename \"$0\"`$none\n" >&2
+    printf -- "${blue}------ RUNNING: `basename \"$0\"`$none\n" >&2
 }
 
 ## Call after all test cases.  Exits with 1 if \ref tests_failed is not 0 or
 # exits with 0 else.
 tests_end ()
 {
-    printf "${blue}------ FINISHED: `basename \"$0\"`$none\n" >&2
+    printf -- "${blue}------ FINISHED: `basename \"$0\"`$none\n" >&2
     if [ "$tests_failed" -eq 0 ]; then
-        printf "${green}------ ALL $tests_count tests passed.$none\n" >&2
+        printf -- "${green}------ ALL $tests_count tests passed.$none\n" >&2
         exit 0
     else
-        printf "${cyan}------ $tests_failed of $tests_count %s$none\n" \
+        printf -- "${cyan}------ $tests_failed of $tests_count %s$none\n" \
             "tests did NOT pass." >&2
         exit 1
     fi
