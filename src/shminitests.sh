@@ -75,6 +75,32 @@ execute_test_case ()
     evaluate_test "$3"
 }
 
+## Call \ref evaluate_test with \a $3, use \a $1 as input, capture standard
+# output and compare to \a $2.  Passes if this output equals the expected one.
+# Also set \ref test_case and \ref test_exit like \ref execute_test_case.
+#
+# \param $1 The input string which will be given to \a $3
+# \param $2 The expected output.
+# \param $3 The function which represents a test case.  Will be executed with
+# the given input \a $1 as standard input.
+# \param $4 An optional name for \ref test_case.  Defaults to \a $3 if not set
+# (or null string).
+execute_test_compare ()
+{
+    input_str="$1"
+    given_output="$2"
+    test_function=$3
+    test_case=${4:-$test_function}
+    actual_output="`\"$test_function\" <<EOF
+$input_str
+EOF
+    `"
+    [ "$actual_output" = "$given_output" ]
+    evaluate_test "'$actual_output'
+    !=
+'$given_output'"
+}
+
 ## Call before any test case.  Will set the initial values of the global
 # variables.
 tests_start ()
@@ -101,7 +127,7 @@ tests_end ()
     fi
 }
 
-# Copyright 2017 A. Johannes RICHTER <albrechtjohannes.richter@gmail.com>
+# Copyright 2017, 2018 A. Johannes RICHTER <albrechtjohannes.richter@gmail.com>
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

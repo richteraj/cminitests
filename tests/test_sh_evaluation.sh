@@ -86,10 +86,27 @@ test_function_false () { false; }
 Execute_test_case_works_with_user_functions
 [ $? -eq 0 ] && echo || exit 1
 
+Comparing_test_output_to_expected_result ()
+{
+    tests_start
+    expected="Line 1
+Line 2
+
+Line 4"
+    func=cat
+    execute_test_compare "$expected" "$expected" "$func" "Compare identity"
+    [ $tests_failed -eq 0 ] || return 1
+    func=tac
+    execute_test_compare "$expected" "$expected" "$func" "Compare unequal"
+    [ $tests_failed -eq 1 ] || return 1
+}
+
+Comparing_test_output_to_expected_result
+[ $? -eq 0 ] && echo || exit 1
 
 exit 0
 
-# Copyright 2017 A. Johannes RICHTER <albrechtjohannes.richter@gmail.com>
+# Copyright 2017, 2018 A. Johannes RICHTER <albrechtjohannes.richter@gmail.com>
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
