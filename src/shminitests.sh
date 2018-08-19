@@ -28,8 +28,11 @@ fi
 tests_count=0
 ## Total number of failed tests.
 tests_failed=0
-## Name of the current test case
+## Name of the current test case.  Will be cleared by any evaluation function
+# and saved to \ref last_test_case.
 test_case=""
+## Name of the previous \ref test_case or the default assigned one.
+last_test_case=
 ## Result (exit status) of the current test case.
 test_exit=
 
@@ -45,6 +48,7 @@ evaluate_test ()
     test_exit=${test_exit:-$?}
     tests_count=`expr $tests_count + 1`
 
+    test_case="${test_case:-"Test case $tests_count"}"
     printf "$test_case: " >&2
     if [ "$test_exit" -eq 0 ]; then
         printf "${green}passed$none.\n" >&2
@@ -56,6 +60,8 @@ evaluate_test ()
         fi
     fi
     test_exit=
+    last_test_case="$test_case"
+    test_case=
 }
 
 ## Call \ref evaluate_test with \a $1 and automatically set \ref test_case and
@@ -64,13 +70,13 @@ evaluate_test ()
 # \param $1 The function which represents a test case.  Should "return" 0 on
 # success, i.e. the return state of the last command in the function is
 # evaluated for \ref test_exit.
-# \param $2 An optional name for \ref test_case.  Defaults to \a $1 if not set
-# (or null string).
+# \param $2 An optional name for \ref test_case.  Defaults to \ref test_case or
+# \a $1 (in that order or else null string).
 # \param $3 An optional error message that is passed on to \ref evaluate_test.
 execute_test_case ()
 {
     test_function=$1
-    test_case=${2:-$test_function}
+    test_case=${2:-${test_case:-$test_function}}
     "$test_function"
     evaluate_test "$3"
 }
@@ -90,7 +96,7 @@ execute_test_compare ()
     input_str="$1"
     given_output="$2"
     test_function=$3
-    test_case=${4:-$test_function}
+    test_case=${4:-${test_case:-$test_function}}
     actual_output="`\"$test_function\" <<EOF
 $input_str
 EOF

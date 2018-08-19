@@ -97,7 +97,7 @@ Execute_test_case_works_with_user_functions ()
 {
     tests_start
     execute_test_case test_function_true "alternative name"
-    [ "$test_case" = "alternative name" ] || return 1
+    [ "$last_test_case" = "alternative name" ] || return 1
     execute_test_case test_function_false "" "true != false"
     [ $tests_failed -eq 1 ] || return 1
 }
@@ -123,6 +123,50 @@ Line 4"
 }
 
 run Comparing_test_output_to_expected_result
+
+Variable_test_case_is_reset_after_test ()
+{
+    test_case="Test case"
+    true
+    evaluate_test
+    [ -z "$test_case" ] || return 1
+
+    test_case="Test case"
+    execute_test_case ls
+    [ -z "$test_case" ] || return 1
+
+    test_case="Test case"
+    execute_test_compare "1234" "1234" cat
+    [ -z "$test_case" ] || return 1
+}
+
+Variable_test_case_is_set_to_reasonable_default ()
+{
+    test_case=
+    true
+    evaluate_test
+    [ "$last_test_case" = "Test case $tests_count" ] || return 1
+
+    test_case="execute_test_case: ignore \$test_case"
+    execute_test_case ls "ls test"
+    [ "$last_test_case" = "ls test" ] || return 1
+
+    test_case="execute_test_case: \$test_case takes priority over \$1"
+    execute_test_case ls
+    [ "$last_test_case" != "ls" ] || return 1
+    [ "$last_test_case" != "Test case $tests_count" ] || return 1
+
+    test_case="execute_test_compare: ignore \$test_case"
+    execute_test_compare "1234" "1234" cat "cat test"
+    [ "$last_test_case" = "cat test" ] || return 1
+
+    test_case=
+    execute_test_compare "1234" "1234" cat
+    [ "$last_test_case" = "cat" ] || return 1
+}
+
+run Variable_test_case_is_reset_after_test
+run Variable_test_case_is_set_to_reasonable_default
 
 exit $run_exit_status
 
