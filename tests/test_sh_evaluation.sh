@@ -3,14 +3,40 @@
 sh_mini_tests="$1"
 . "$sh_mini_tests"
 
+## Finally exit with this code which will be set by \ref run.  Indicates failure
+# of at least one test
+run_exit_status=0
+
+## Helper function to print the current test function before executing (in a
+# sub-shell) and testing against return status.
+#
+# \param $1 Function, with no parameters, to call.
+# \param $2 Optional return value to test against.  Defaults to zero.
+run ()
+{
+    run_func="$1"
+    expected_return="${2:-0}"
+    printf "Test %s: ..." "$run_func"
+    tmp_out="`mktemp`"
+    ( "$run_func" >"$tmp_out" 2>&1 )
+    if [ $? -eq "$expected_return" ]; then
+        printf "${green}passed$none\n"
+        rm -f "$tmp_out"
+    else
+        printf "${cyan}failed$none with:\n"
+        nl "$tmp_out"
+        rm -f "$tmp_out"
+        run_exit_status=1
+    fi
+}
+
 Test_suite_passes_with_no_tests ()
 {
     tests_start
     tests_end
 }
 
-( Test_suite_passes_with_no_tests )
-[ $? -eq 0 ] && echo || exit 1
+run Test_suite_passes_with_no_tests
 
 Test_suite_passes_if_exit_code_is_zero ()
 {
@@ -21,8 +47,7 @@ Test_suite_passes_if_exit_code_is_zero ()
     tests_end
 }
 
-( Test_suite_passes_if_exit_code_is_zero )
-[ $? -eq 0 ] && echo || exit 1
+run Test_suite_passes_if_exit_code_is_zero
 
 Test_suite_fails_if_exit_code_was_non_zero_once ()
 {
@@ -33,8 +58,7 @@ Test_suite_fails_if_exit_code_was_non_zero_once ()
     tests_end
 }
 
-( Test_suite_fails_if_exit_code_was_non_zero_once )
-[ $? -eq 1 ] && echo || exit 1
+run Test_suite_fails_if_exit_code_was_non_zero_once 1
 
 Test_suite_counts_right ()
 {
@@ -49,8 +73,7 @@ Test_suite_counts_right ()
     [ $tests_count -eq 4 -a $tests_failed -eq 3 ] || return 1
 }
 
-Test_suite_counts_right
-[ $? -eq 0 ] && echo || exit 1
+run Test_suite_counts_right
 
 Not_setting_exit_code_tests_last_return_code ()
 {
@@ -68,8 +91,7 @@ Not_setting_exit_code_tests_last_return_code ()
     tests_end
 }
 
-( Not_setting_exit_code_tests_last_return_code )
-[ $? -eq 1 ] && echo || exit 1
+run Not_setting_exit_code_tests_last_return_code 1
 
 Execute_test_case_works_with_user_functions ()
 {
@@ -83,8 +105,7 @@ Execute_test_case_works_with_user_functions ()
 test_function_true () { true; }
 test_function_false () { false; }
 
-Execute_test_case_works_with_user_functions
-[ $? -eq 0 ] && echo || exit 1
+run Execute_test_case_works_with_user_functions
 
 Comparing_test_output_to_expected_result ()
 {
@@ -101,10 +122,9 @@ Line 4"
     [ $tests_failed -eq 1 ] || return 1
 }
 
-Comparing_test_output_to_expected_result
-[ $? -eq 0 ] && echo || exit 1
+run Comparing_test_output_to_expected_result
 
-exit 0
+exit $run_exit_status
 
 # Copyright 2017, 2018 A. Johannes RICHTER <albrechtjohannes.richter@gmail.com>
 
